@@ -6,15 +6,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@SuppressWarnings("serial")
 @WebServlet("/member/add")
 public class MemberAddServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -40,11 +41,12 @@ public class MemberAddServlet extends HttpServlet {
 		PreparedStatement stmt = null;
 
 		try {
-			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			ServletContext sc = this.getServletContext();
+			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost/mvc", //JDBC URL
-					"root",			// DBMS 사용자 아이디
-					"java0000");	// DBMS 사용자 암호
+					sc.getInitParameter("url"), 		//JDBC URL
+					sc.getInitParameter("username"),	// DBMS 사용자 아이디
+					sc.getInitParameter("password"));	// DBMS 사용자 암호
 			stmt = conn.prepareStatement(
 					"INSERT INTO members(email,pwd,mname,cre_date,mod_date)"
 					+ " VALUES (?,?,?,NOW(),NOW())");

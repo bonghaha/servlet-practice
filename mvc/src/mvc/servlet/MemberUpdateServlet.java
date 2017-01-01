@@ -29,10 +29,9 @@ public class MemberUpdateServlet extends HttpServlet {
 			ServletContext sc = this.getServletContext();
 			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					this.getInitParameter("url"),
-					this.getInitParameter("username"),
-					this.getInitParameter("password"));
-			
+					sc.getInitParameter("url"),
+					sc.getInitParameter("username"),
+					sc.getInitParameter("password"));
 			stmt = conn.createStatement();
 			String query = "SELECT mno, email, mname, cre_date FROM members WHERE mno = " + request.getParameter("mno");
 			rs = stmt.executeQuery(query);
@@ -48,6 +47,7 @@ public class MemberUpdateServlet extends HttpServlet {
 			out.println("이메일 : <input type='text' name='email' value='" + rs.getString("email") + "'><br>");
 			out.println("가입일 : " + rs.getDate("cre_date") + "<br>");
 			out.println("<input type='submit' value='저장'>");
+			out.println("<input type='button' value='삭제' onclick='location.href=\"delete?mno=" + request.getParameter("mno") + "\"'>");
 			out.println("<input type='button' value='취소' onclick='location.href=\"list\"'>");
 			out.println("</form>");
 			out.println("</body></html>");
@@ -68,11 +68,12 @@ public class MemberUpdateServlet extends HttpServlet {
 		PreparedStatement pstmt = null;
 		
 		try {
-			Class.forName(this.getInitParameter("driver"));
+			ServletContext sc = this.getServletContext();
+			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					this.getInitParameter("url"),
-					this.getInitParameter("username"),
-					this.getInitParameter("password"));
+					sc.getInitParameter("url"),
+					sc.getInitParameter("username"),
+					sc.getInitParameter("password"));
 			String query = "UPDATE members SET email=?, mname=?, mod_date=now() WHERE mno=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, request.getParameter("email"));

@@ -7,28 +7,30 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-import javax.servlet.GenericServlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+@SuppressWarnings("serial")
 @WebServlet("/member/list")
-public class MemberListServlet extends GenericServlet {
-	private static final long serialVersionUID = 1L;
+public class MemberListServlet extends HttpServlet {
 
 	@Override
-	public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
 		try {
-			DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+			ServletContext sc = this.getServletContext();
+			Class.forName(sc.getInitParameter("driver"));
 			conn = DriverManager.getConnection(
-					"jdbc:mysql://localhost/mvc", //JDBC URL
-					"root",			// DBMS 사용자 아이디
-					"java0000");	// DBMS 사용자 암호
+					sc.getInitParameter("url"),			//JDBC URL
+					sc.getInitParameter("username"),	// DBMS 사용자 아이디
+					sc.getInitParameter("password"));	// DBMS 사용자 암호
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(
 					"SELECT mno,mname,email,cre_date" + 
@@ -45,7 +47,8 @@ public class MemberListServlet extends GenericServlet {
 					rs.getInt("mno") + "," +
 					"<a href='update?mno=" + rs.getInt("mno") + "'>" + rs.getString("mname") + "</a>," +
 					rs.getString("email") + "," + 
-					rs.getDate("cre_date") + "<br>"
+					rs.getDate("cre_date") +
+					"<a href='delete?mno=" + rs.getInt("mno") + "'>[삭제]</a><br>"
 				);
 			}
 			out.println("</body></html>");
