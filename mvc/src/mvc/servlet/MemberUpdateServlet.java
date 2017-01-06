@@ -8,12 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import mvc.vo.Member;
 
 
 @SuppressWarnings("serial")
@@ -33,26 +36,30 @@ public class MemberUpdateServlet extends HttpServlet {
 					sc.getInitParameter("username"),
 					sc.getInitParameter("password"));
 			stmt = conn.createStatement();
-			String query = "SELECT mno, email, mname, cre_date FROM members WHERE mno = " + request.getParameter("mno");
+			String query = "SELECT mno, email, mname, cre_date, mod_date FROM members WHERE mno = " + request.getParameter("mno");
 			rs = stmt.executeQuery(query);
 			rs.next();
 			
 			response.setContentType("text/html; charset=UTF-8");
-			PrintWriter out = response.getWriter();
-			out.println("<html><head><title>회원정보</title></head>");
-			out.println("<body><h1>회원정보</h1>");
-			out.println("<form action='update' method='post'>");
-			out.println("번호 : <input type='text' name='mno' value='" + request.getParameter("mno") + "'readonly><br>");
-			out.println("이름 : <input type='text' name='mname' value='" + rs.getString("mname") + "'><br>");
-			out.println("이메일 : <input type='text' name='email' value='" + rs.getString("email") + "'><br>");
-			out.println("가입일 : " + rs.getDate("cre_date") + "<br>");
-			out.println("<input type='submit' value='저장'>");
-			out.println("<input type='button' value='삭제' onclick='location.href=\"delete?mno=" + request.getParameter("mno") + "\"'>");
-			out.println("<input type='button' value='취소' onclick='location.href=\"list\"'>");
-			out.println("</form>");
-			out.println("</body></html>");
+			Member member = new Member()
+				.setMno(Integer.parseInt(request.getParameter("mno")))
+				.setMname(rs.getString("mname"))
+				.setEmail(rs.getString("email"))
+				.setCreatedDate(rs.getDate("cre_date"))
+				.setModifiedDate(rs.getDate("mod_date"));
+			
+			request.setAttribute("member", member);
+			
+			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberUpdate.jsp");
+			//include?? or forward?? jsp가 작업을 끝내고 추가작업 할 것이 있나???
+			rd.forward(request, response);
+			
 		} catch (Exception e) {
-			throw new ServletException(e);
+//			throw new ServletException(e);
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
+			
 		} finally {
 			try {if(rs != null) rs.close();} catch(Exception e) {}
 			try {if(stmt != null) stmt.close();} catch(Exception e) {}
@@ -78,10 +85,15 @@ public class MemberUpdateServlet extends HttpServlet {
 			pstmt.setString(2, request.getParameter("mname"));
 			pstmt.setInt(3, Integer.parseInt(request.getParameter("mno")));
 			pstmt.executeUpdate();
+			
 			response.sendRedirect("list");
 			
 		} catch (Exception e) {
-			throw new ServletException(e);
+//			throw new ServletException(e);
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
+			
 		} finally {
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
 			try {if(conn != null) conn.close();} catch(Exception e) {}
