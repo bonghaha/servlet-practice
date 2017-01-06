@@ -24,11 +24,7 @@ public class MemberDeleteServlet extends HttpServlet {
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"),
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password"));
+			conn = (Connection) sc.getAttribute("conn");
 			String query = "DELETE FROM members WHERE mno=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, request.getParameter("mno"));
@@ -44,7 +40,6 @@ public class MemberDeleteServlet extends HttpServlet {
 			
 		} finally {
 			try {if (pstmt != null) pstmt.close();} catch(Exception e) {}
-			try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
 	}
 }
