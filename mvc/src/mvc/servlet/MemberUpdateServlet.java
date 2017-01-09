@@ -1,9 +1,7 @@
 package mvc.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -34,24 +32,25 @@ public class MemberUpdateServlet extends HttpServlet {
 			stmt = conn.createStatement();
 			String query = "SELECT mno, email, mname, cre_date, mod_date FROM members WHERE mno = " + request.getParameter("mno");
 			rs = stmt.executeQuery(query);
-			rs.next();
 			
-			response.setContentType("text/html; charset=UTF-8");
-			Member member = new Member()
-				.setMno(Integer.parseInt(request.getParameter("mno")))
-				.setMname(rs.getString("mname"))
-				.setEmail(rs.getString("email"))
-				.setCreatedDate(rs.getDate("cre_date"))
-				.setModifiedDate(rs.getDate("mod_date"));
-			
-			request.setAttribute("member", member);
+			if(rs.next()) {
+				request.setAttribute("member", new Member()
+						.setMno(Integer.parseInt(request.getParameter("mno")))
+						.setMname(rs.getString("mname"))
+						.setEmail(rs.getString("email"))
+						.setCreatedDate(rs.getDate("cre_date"))
+						.setModifiedDate(rs.getDate("mod_date")));
+				
+			} else {
+				throw new Exception("해당 번호의 회원을 찾을 수 없습니다.");
+			}
 			
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberUpdate.jsp");
 			//include?? or forward?? jsp가 작업을 끝내고 추가작업 할 것이 있나???
 			rd.forward(request, response);
 			
 		} catch (Exception e) {
-//			throw new ServletException(e);
+			e.printStackTrace();
 			request.setAttribute("error", e);
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
@@ -77,10 +76,9 @@ public class MemberUpdateServlet extends HttpServlet {
 			pstmt.setInt(3, Integer.parseInt(request.getParameter("mno")));
 			pstmt.executeUpdate();
 			
-			response.sendRedirect("list");
+			response.sendRedirect("/member/list");
 			
 		} catch (Exception e) {
-//			throw new ServletException(e);
 			request.setAttribute("error", e);
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);

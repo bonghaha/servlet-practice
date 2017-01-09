@@ -1,9 +1,7 @@
 package mvc.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
 import javax.servlet.RequestDispatcher;
@@ -20,7 +18,6 @@ public class MemberAddServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("text/html; charset=UTF-8");
 		response.sendRedirect("/member/MemberAdd.jsp");
 	}
 	
@@ -41,10 +38,13 @@ public class MemberAddServlet extends HttpServlet {
 			stmt.executeUpdate();
 			
 			// 리다이렉트를 이용한 리프래시
-			response.sendRedirect("list");	// 상대경로를 이용한 @WebServlet("/member/list")로 리다이렉트
+			response.sendRedirect("/member/list");	
 			
 		} catch (Exception e) {
-			throw new ServletException(e);
+//			throw new ServletException(e);
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
 			
 		} finally {
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}

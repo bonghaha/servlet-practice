@@ -10,9 +10,9 @@
 	
 	<h1>회원 등록</h1>
 	<form action="add" method="post">
-		<p>이름 : <input type="text" name="mname"><br></p>
-		<p>이메일 : <input type="text" name="email"><br></p>
-		<p>암호 : <input type="password" name="password"><br></p>
+		<p>이름 : <input type="text" name="mname"></p>
+		<p>이메일 : <input type="text" name="email"></p>
+		<p>암호 : <input type="password" name="password"></p>
 		<div>
 			<input type="submit" value="추가">
 			<input type="reset" value="취소">

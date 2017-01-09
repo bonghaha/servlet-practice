@@ -2,7 +2,6 @@ package mvc.servlet;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 
 import javax.servlet.RequestDispatcher;
@@ -30,7 +29,7 @@ public class MemberDeleteServlet extends HttpServlet {
 			pstmt.setString(1, request.getParameter("mno"));
 			pstmt.executeUpdate();
 			
-			response.sendRedirect("list");
+			response.sendRedirect("/member/list");
 			
 		} catch(Exception e) {
 //			throw new ServletException(e);
