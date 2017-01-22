@@ -148,6 +148,28 @@ public class MemberDao {
 	 * 회원 존재하면 Member 객체 리턴, 없으면 null 리턴
 	 */
 	public Member exist(String email, String password) throws Exception {
-		return null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			String query = "SELECT mname, email FROM members WHERE email=? AND pwd=?";
+			pstmt = conn.prepareStatement(query);
+			pstmt.setString(1, email);
+			pstmt.setString(2, password);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				return new Member().setMname(rs.getString("mname")).setEmail(email);
+			} else {
+				return null;
+			}
+			
+		} catch(Exception e) {
+			throw e;
+			
+		} finally {
+			try {if(rs != null) rs.close();} catch(Exception e) {}
+			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+		}
 	}
 }
