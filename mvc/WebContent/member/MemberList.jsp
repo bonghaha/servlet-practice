@@ -16,6 +16,9 @@
 	 -->
 	<h1>회원 목록</h1>
 	<p><a href="/member/add">신규 회원</a></p>
+	<c:if test="${not empty sessionScope.member}">
+		${sessionScope.member.mname}님 환영합니다.
+	</c:if>
 	
 	<c:forEach var="member" items="${members}">
 		<p>
