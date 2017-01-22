@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mvc.dao.MemberDao;
 import mvc.vo.Member;
 
 
@@ -23,27 +24,15 @@ public class MemberUpdateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
 		
 		try {
 			ServletContext sc = this.getServletContext();
 			conn = (Connection) sc.getAttribute("conn");
-			stmt = conn.createStatement();
-			String query = "SELECT mno, email, mname, cre_date, mod_date FROM members WHERE mno = " + request.getParameter("mno");
-			rs = stmt.executeQuery(query);
 			
-			if(rs.next()) {
-				request.setAttribute("member", new Member()
-						.setMno(Integer.parseInt(request.getParameter("mno")))
-						.setMname(rs.getString("mname"))
-						.setEmail(rs.getString("email"))
-						.setCreatedDate(rs.getDate("cre_date"))
-						.setModifiedDate(rs.getDate("mod_date")));
-				
-			} else {
-				throw new Exception("해당 번호의 회원을 찾을 수 없습니다.");
-			}
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
+			Member member = memberDao.selectOne(Integer.parseInt(request.getParameter("mno")));
+			request.setAttribute("member", member);
 			
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberUpdate.jsp");
 			//include?? or forward?? jsp가 작업을 끝내고 추가작업 할 것이 있나???
@@ -55,26 +44,23 @@ public class MemberUpdateServlet extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
 			
-		} finally {
-			try {if(rs != null) rs.close();} catch(Exception e) {}
-			try {if(stmt != null) stmt.close();} catch(Exception e) {}
 		}
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Connection conn = null;
-		PreparedStatement pstmt = null;
 		
 		try {
 			ServletContext sc = this.getServletContext();
 			conn = (Connection) sc.getAttribute("conn");
-			String query = "UPDATE members SET email=?, mname=?, mod_date=now() WHERE mno=?";
-			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, request.getParameter("email"));
-			pstmt.setString(2, request.getParameter("mname"));
-			pstmt.setInt(3, Integer.parseInt(request.getParameter("mno")));
-			pstmt.executeUpdate();
+			
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
+			memberDao.updateMember(new Member()
+				.setEmail(request.getParameter("email"))
+				.setMname(request.getParameter("mname"))
+				.setMno(Integer.parseInt(request.getParameter("mno"))));
 			
 			response.sendRedirect("/member/list");
 			
@@ -83,8 +69,6 @@ public class MemberUpdateServlet extends HttpServlet {
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
 			
-		} finally {
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
 		}
 	}
 }

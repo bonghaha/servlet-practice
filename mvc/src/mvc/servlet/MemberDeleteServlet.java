@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mvc.dao.MemberDao;
+
 @SuppressWarnings("serial")
 @WebServlet("/member/delete")
 public class MemberDeleteServlet extends HttpServlet {
@@ -24,10 +26,10 @@ public class MemberDeleteServlet extends HttpServlet {
 		try {
 			ServletContext sc = this.getServletContext();
 			conn = (Connection) sc.getAttribute("conn");
-			String query = "DELETE FROM members WHERE mno=?";
-			pstmt = conn.prepareStatement(query);
-			pstmt.setString(1, request.getParameter("mno"));
-			pstmt.executeUpdate();
+			
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
+			memberDao.deleteMember(Integer.parseInt(request.getParameter("mno")));
 			
 			response.sendRedirect("/member/list");
 			
