@@ -6,22 +6,25 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import mvc.util.DBConnectionPool;
 import mvc.vo.Member;
 
 public class MemberDao {
-	Connection conn;
+	DBConnectionPool connPool;
 	
-	public void setConnection(Connection conn) {
-		this.conn = conn;
+	public void setDbConnectionPool(DBConnectionPool connPool) {
+		this.connPool = connPool;
 	}
 	
 	/*
 	 * 회원 등록하기
 	 */
 	public int insertMember(Member member) throws Exception {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
 		try {
+			conn = connPool.getconnection();
 			String query = "INSERT INTO members(email,pwd,mname,cre_date,mod_date) VALUES (?,?,?,NOW(),NOW())";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, member.getEmail());
@@ -34,6 +37,7 @@ public class MemberDao {
 			
 		} finally {
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+			if(conn != null) connPool.returnConnection(conn);
 		}
 	}
 	
@@ -41,10 +45,12 @@ public class MemberDao {
 	 * 회원리스트 보여주기
 	 */
 	public List<Member> selectList() throws Exception {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
+			conn = connPool.getconnection();
 			String query = "SELECT mno, mname, email, cre_date FROM members ORDER BY mno ASC";
 			pstmt = conn.prepareStatement(query);
 			rs = pstmt.executeQuery();
@@ -65,6 +71,7 @@ public class MemberDao {
 		} finally {
 			try {if(rs != null) rs.close();} catch(Exception e) {}
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+			if(conn != null) connPool.returnConnection(conn);
 		}
 	}
 	
@@ -72,10 +79,12 @@ public class MemberDao {
 	 * 회원 상세정보 조회
 	 */
 	public Member selectOne(int no) throws Exception {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
+			conn = connPool.getconnection();
 			String query = "SELECT mno, email, mname, cre_date, mod_date FROM members WHERE mno = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, no);
@@ -99,6 +108,7 @@ public class MemberDao {
 		} finally {
 			try {if(rs != null) rs.close();} catch(Exception e) {}
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+			if(conn != null) connPool.returnConnection(conn);
 		}
 	}
 	
@@ -106,9 +116,11 @@ public class MemberDao {
 	 * 회원정보 변경
 	 */
 	public int updateMember(Member member) throws Exception {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
 		try {
+			conn = connPool.getconnection();
 			String query = "UPDATE members SET email=?, mname=?, mod_date=now() WHERE mno=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, member.getEmail());
@@ -121,6 +133,7 @@ public class MemberDao {
 			
 		} finally {
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+			if(conn != null) connPool.returnConnection(conn);
 		}
 	}
 	
@@ -128,9 +141,11 @@ public class MemberDao {
 	 * 회원정보삭제
 	 */
 	public int deleteMember(int mno) throws Exception {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		
 		try {
+			conn = connPool.getconnection();
 			String query = "DELETE FROM members WHERE mno=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, mno);
@@ -141,6 +156,7 @@ public class MemberDao {
 			
 		} finally {
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+			if(conn != null) connPool.returnConnection(conn);
 		}
 	}
 	
@@ -148,10 +164,12 @@ public class MemberDao {
 	 * 회원 존재하면 Member 객체 리턴, 없으면 null 리턴
 	 */
 	public Member exist(String email, String password) throws Exception {
+		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
+			conn = connPool.getconnection();
 			String query = "SELECT mname, email FROM members WHERE email=? AND pwd=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, email);
@@ -170,6 +188,7 @@ public class MemberDao {
 		} finally {
 			try {if(rs != null) rs.close();} catch(Exception e) {}
 			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
+			if(conn != null) connPool.returnConnection(conn);
 		}
 	}
 }
