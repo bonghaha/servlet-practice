@@ -37,13 +37,15 @@
   </filter-mapping>
   
   <!-- 서블릿 선언 -->
+  <!-- 
   <servlet>
   	<servlet-name>AppInitServlet</servlet-name>
   	<servlet-class>mvc.servlet.AppInitServlet</servlet-class>
   	<load-on-startup>1</load-on-startup>
-  	<!-- 서블릿을 배치할 때 <load-on-startup> 태그를 지정하면, 해당 서블릿은 웹 어플리케이션이 시작될 때 자동으로 생성됩니다. 태그의 값 = 생성 순서. -->
-  	<!-- URL 매핑이 없는 서블릿은 클라이언트에서 실행을 요청할 수 X. AppInitServlet처럼 다른 서블릿을 위해 준비 작업을 수행하는 서블릿인 경우 URL을 지정하지 않음 -->
   </servlet>
+  -->
+	<!-- 서블릿을 배치할 때 <load-on-startup> 태그를 지정하면, 해당 서블릿은 웹 어플리케이션이 시작될 때 자동으로 생성됩니다. 태그의 값 = 생성 순서. -->
+	<!-- URL 매핑이 없는 서블릿은 클라이언트에서 실행을 요청할 수 X. AppInitServlet처럼 다른 서블릿을 위해 준비 작업을 수행하는 서블릿인 경우 URL을 지정하지 않음 -->
   
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
