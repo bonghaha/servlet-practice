@@ -1,7 +1,6 @@
 package mvc.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -25,14 +24,11 @@ public class MemberAddServlet extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Connection conn = null;
-
+		
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection) sc.getAttribute("conn");
 			
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			memberDao.insertMember(new Member()
 				.setEmail(request.getParameter("email"))
 				.setPassword(request.getParameter("password"))

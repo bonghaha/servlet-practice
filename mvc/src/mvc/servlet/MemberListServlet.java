@@ -1,7 +1,6 @@
 package mvc.servlet;
 
 import java.io.IOException;
-import java.sql.Connection;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -19,15 +18,11 @@ public class MemberListServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Connection conn = null;
 
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection) sc.getAttribute("conn");
 			
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
-			
+			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			request.setAttribute("members", memberDao.selectList());
 			
 			response.setContentType("text/html; charset=UTF-8");
