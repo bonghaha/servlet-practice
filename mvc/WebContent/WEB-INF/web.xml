@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xmlns="http://java.sun.com/xml/ns/javaee" 
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" 
+		 id="WebApp_ID" 
+		 version="3.0">
   <display-name>mvc</display-name>
+  
+  <!-- 톰캣 서버에 설정한 DataSource를 웹 애플리케이션에서 사용하려면 DD파일(web.xml)에 서버자원을 참조한다는 선언
+  	res-ref-name : JNDI 이름(tomcat서버의 context.xml에 선언한 자원의 이름)
+  	res-ref-type : 리턴될 자원의 클래스 이름(패키지명 포함)(tomcat서버에서 리턴하는 자원의 타입. context.xml에 선언한 자원의 타입과 같아야 함)
+  	res-auth : 자원 관리의 주체 (tomcat서버가 리턴하는 자원의 관리 주체. 'Container'는 서버에서 관리한다는 의미)
+  	
+  	*JNDI : Java naming and Directory Interface API의 머리글자. 디렉터리 서비스에 접근하는데 필요한 API이며 애플리케이션은 이 API를 사용하여 서버의 자원을 찾을 수 있다. (참조:자바 웹 개발 워크북 p.421)
+  -->
+  <resource-ref>
+  	<res-ref-name>jdbc/mvc</res-ref-name>
+  	<res-type>javax.sql.DataSource</res-type>
+  	<res-auth>Container</res-auth>
+  </resource-ref>
+  
   <!-- 콘텍스트 초기화 매개변수 -->
   <context-param>
     <param-name>driver</param-name>

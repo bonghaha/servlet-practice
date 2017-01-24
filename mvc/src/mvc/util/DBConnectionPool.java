@@ -18,7 +18,7 @@ public class DBConnectionPool {
 		Class.forName(driver);
 	}
 	
-	public Connection getconnection() throws Exception {
+	public Connection getConnection() throws Exception {
 		if (connList.size() > 0) {
 			Connection conn = connList.get(0);
 			if (conn.isValid(10)) {	// Connection객체가 닫히지 않고 아직 유효한지 여부를 나타냄. 10 => 연결의 유효성을 검사하는 동안 대기하는 시간(초)을 지정하는 int

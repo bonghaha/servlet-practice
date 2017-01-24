@@ -6,14 +6,15 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-import mvc.util.DBConnectionPool;
+import javax.sql.DataSource;
+
 import mvc.vo.Member;
 
 public class MemberDao {
-	DBConnectionPool connPool;
+	DataSource ds;
 	
-	public void setDbConnectionPool(DBConnectionPool connPool) {
-		this.connPool = connPool;
+	public void setDataSource(DataSource ds) {
+		this.ds = ds;
 	}
 	
 	/*
@@ -24,7 +25,7 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		
 		try {
-			conn = connPool.getconnection();
+			conn = ds.getConnection();
 			String query = "INSERT INTO members(email,pwd,mname,cre_date,mod_date) VALUES (?,?,?,NOW(),NOW())";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, member.getEmail());
@@ -32,12 +33,12 @@ public class MemberDao {
 			pstmt.setString(3, member.getMname());
 			return pstmt.executeUpdate();
 			
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 			
 		} finally {
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
-			if(conn != null) connPool.returnConnection(conn);
+			try {if (pstmt != null) pstmt.close();} catch (Exception e) {}
+			try {if (conn != null) conn.close();} catch (Exception e) {}
 		}
 	}
 	
@@ -50,13 +51,13 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try {
-			conn = connPool.getconnection();
+			conn = ds.getConnection();
 			String query = "SELECT mno, mname, email, cre_date FROM members ORDER BY mno ASC";
 			pstmt = conn.prepareStatement(query);
 			rs = pstmt.executeQuery();
 			
 			ArrayList<Member> members = new ArrayList<Member>();
-			while(rs.next()) {
+			while (rs.next()) {
 				members.add(new Member()
 					.setMno(rs.getInt("mno"))
 					.setMname(rs.getString("mname"))
@@ -65,13 +66,13 @@ public class MemberDao {
 			}
 			return members;
 			
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 			
 		} finally {
-			try {if(rs != null) rs.close();} catch(Exception e) {}
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
-			if(conn != null) connPool.returnConnection(conn);
+			try {if (rs != null) rs.close();} catch (Exception e) {}
+			try {if (pstmt != null) pstmt.close();} catch (Exception e) {}
+			try {if (conn != null) conn.close();} catch (Exception e) {}
 		}
 	}
 	
@@ -84,14 +85,14 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try {
-			conn = connPool.getconnection();
+			conn = ds.getConnection();
 			String query = "SELECT mno, email, mname, cre_date, mod_date FROM members WHERE mno = ?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, no);
 			rs = pstmt.executeQuery();
 			
 			Member member = new Member();
-			if(rs.next()) {
+			if (rs.next()) {
 				member.setMno(rs.getInt("mno"));
 				member.setEmail(rs.getString("email"));
 				member.setMname(rs.getString("mname"));
@@ -102,13 +103,13 @@ public class MemberDao {
 			}
 			return member;
 			
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 			
 		} finally {
-			try {if(rs != null) rs.close();} catch(Exception e) {}
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
-			if(conn != null) connPool.returnConnection(conn);
+			try {if (rs != null) rs.close();} catch (Exception e) {}
+			try {if (pstmt != null) pstmt.close();} catch (Exception e) {}
+			try {if (conn != null) conn.close();} catch (Exception e) {}
 		}
 	}
 	
@@ -120,7 +121,7 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		
 		try {
-			conn = connPool.getconnection();
+			conn = ds.getConnection();
 			String query = "UPDATE members SET email=?, mname=?, mod_date=now() WHERE mno=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, member.getEmail());
@@ -132,8 +133,8 @@ public class MemberDao {
 			throw e;
 			
 		} finally {
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
-			if(conn != null) connPool.returnConnection(conn);
+			try {if (pstmt != null) pstmt.close();} catch (Exception e) {}
+			try {if (conn != null) conn.close();} catch (Exception e) {}
 		}
 	}
 	
@@ -145,18 +146,18 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		
 		try {
-			conn = connPool.getconnection();
+			conn = ds.getConnection();
 			String query = "DELETE FROM members WHERE mno=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setInt(1, mno);
 			return pstmt.executeUpdate();
 			
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 			
 		} finally {
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
-			if(conn != null) connPool.returnConnection(conn);
+			try {if (pstmt != null) pstmt.close();} catch (Exception e) {}
+			try {if (conn != null) conn.close();} catch (Exception e) {}
 		}
 	}
 	
@@ -169,26 +170,26 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try {
-			conn = connPool.getconnection();
+			conn = ds.getConnection();
 			String query = "SELECT mname, email FROM members WHERE email=? AND pwd=?";
 			pstmt = conn.prepareStatement(query);
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);
 			rs = pstmt.executeQuery();
 			
-			if(rs.next()) {
+			if (rs.next()) {
 				return new Member().setMname(rs.getString("mname")).setEmail(email);
 			} else {
 				return null;
 			}
 			
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw e;
 			
 		} finally {
-			try {if(rs != null) rs.close();} catch(Exception e) {}
-			try {if(pstmt != null) pstmt.close();} catch(Exception e) {}
-			if(conn != null) connPool.returnConnection(conn);
+			try {if (rs != null) rs.close();} catch (Exception e) {}
+			try {if (pstmt != null) pstmt.close();} catch (Exception e) {}
+			try {if (conn != null) conn.close();} catch (Exception e) {}
 		}
 	}
 }

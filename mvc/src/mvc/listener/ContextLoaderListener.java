@@ -1,32 +1,32 @@
 package mvc.listener;
 
 
+import java.sql.SQLException;
+
+import javax.naming.InitialContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import javax.sql.DataSource;
 
 import mvc.dao.MemberDao;
-import mvc.util.DBConnectionPool;
 
 @WebListener // 애노테이션으로 리스너 배치. or DD파일에 XML태그 선언
-
 public class ContextLoaderListener implements ServletContextListener {
-	DBConnectionPool connPool;
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
+		
 		try {
 			ServletContext sc = event.getServletContext();
 			
-			connPool = new DBConnectionPool(
-				sc.getInitParameter("driver"),
-				sc.getInitParameter("url"),
-				sc.getInitParameter("username"),
-				sc.getInitParameter("password"));
+			// Tomcat자원을 찾기 위해 InitialContext객체 생성. InitialContext의 lookup()메서드를 이요하면, JNDI이름으로 등록되어 있는 서버 자원을 찾을 수 있다.
+			InitialContext initialContext = new InitialContext();
+			DataSource ds = (DataSource) initialContext.lookup("java:comp/env/jdbc/mvc");
 			
 			MemberDao memberDao = new MemberDao();
-			memberDao.setDbConnectionPool(connPool);
+			memberDao.setDataSource(ds);
 			
 			sc.setAttribute("memberDao", memberDao);
 			
@@ -36,8 +36,6 @@ public class ContextLoaderListener implements ServletContextListener {
 	}
 	
 	@Override
-	public void contextDestroyed(ServletContextEvent event) {
-		connPool.closeAll();
-	}
+	public void contextDestroyed(ServletContextEvent event) {} // Tomcat서버에 자동으로 해제하라고 설정되어 있기 때문에 메서드안에 내용 작성 안함
 }
 
