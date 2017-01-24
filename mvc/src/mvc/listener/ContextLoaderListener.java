@@ -1,8 +1,6 @@
 package mvc.listener;
 
 
-import java.sql.SQLException;
-
 import javax.naming.InitialContext;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
