@@ -8,7 +8,7 @@
 <body>
 	<jsp:include page="/Header.jsp"/>
 	<h1>회원정보</h1>
-	<form action="/member/update" method="post">
+	<form action="/member/update.do" method="post">
 		<p>번호 : <input type="text" name="mno" value="${member.mno}" readonly></p>
 		<p>이름 : <input type="text" name="mname" value="${member.mname}"></p>
 		<p>이메일 : <input type="text" name="email" value="${member.email}"></p>

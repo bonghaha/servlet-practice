@@ -20,8 +20,7 @@ public class LoginServlet extends HttpServlet{
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/auth/LoginForm.jsp");
-		rd.forward(request, response);
+		request.setAttribute("viewUrl", "/auth/LoginForm.jsp");
 	}
 	
 	@Override

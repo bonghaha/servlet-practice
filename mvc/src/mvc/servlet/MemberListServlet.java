@@ -2,7 +2,6 @@ package mvc.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,22 +24,11 @@ public class MemberListServlet extends HttpServlet {
 			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			request.setAttribute("members", memberDao.selectList());
 			
-			response.setContentType("text/html; charset=UTF-8");
-
-			// JSP로 출력을 위임한다.
-			// RequestDispatcher를 이용한 forward, include통해 JSP로 위임
-			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberList.jsp");	// 경로가 '/'로 시작하면 웹 애플리케이션 루트를 의미
-			
-			// JSP가 작업을 끝낸 후 MemberListServlet에서 추가 작업을 할 경우를 고려하여 include
-			rd.include(request, response);
-			// MemberListServlet과 MemberList.jsp는 request와 response를 공유하게 됨
+			// JSP URL 정보를 프런트 컨트롤러에게 알려주고자 ServletRequest 보관소에 저장합니다.
+			request.setAttribute("viewUrl", "/member/MemberList.jsp");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("error", e);
-			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
-			rd.forward(request, response);
-			
+			throw new ServletException(e);
 		}
 	}
 }

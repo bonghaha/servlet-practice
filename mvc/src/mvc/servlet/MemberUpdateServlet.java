@@ -26,17 +26,10 @@ public class MemberUpdateServlet extends HttpServlet {
 			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			Member member = memberDao.selectOne(Integer.parseInt(request.getParameter("mno")));
 			request.setAttribute("member", member);
-			
-			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberUpdate.jsp");
-			//include?? or forward?? jsp가 작업을 끝내고 추가작업 할 것이 있나???
-			rd.forward(request, response);
+			request.setAttribute("viewUrl", "/member/MemberUpdate.jsp");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			request.setAttribute("error", e);
-			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
-			rd.forward(request, response);
-			
+			throw new ServletException(e);
 		}
 	}
 	

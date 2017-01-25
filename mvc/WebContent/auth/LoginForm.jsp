@@ -7,7 +7,7 @@
 </head>
 <body>
 	<h2>사용자 로그인</h2>
-	<form action="login" method="post">
+	<form action="/auth/login.do" method="post">
 		<p>이메일 : <input type="text" name="email"></p>
 		<p>암호 : <input type="password" name="password"></p>
 		<div>

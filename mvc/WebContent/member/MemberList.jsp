@@ -15,7 +15,7 @@
 		와 같다
 	 -->
 	<h1>회원 목록</h1>
-	<p><a href="/member/add">신규 회원</a></p>
+	<p><a href="/member/add.do">신규 회원</a></p>
 	<c:if test="${not empty sessionScope.member}">
 		${sessionScope.member.mname}님 환영합니다.
 	</c:if>
@@ -23,10 +23,10 @@
 	<c:forEach var="member" items="${members}">
 		<p>
 			${member.mno},
-			<a href="/member/update?mno=${member.mno}">${member.mname}</a>,
+			<a href="/member/update.do?mno=${member.mno}">${member.mname}</a>,
 			${member.email},
 			${member.createdDate}
-			<a href="/member/delete?mno=${member.mno}">[삭제]</a>
+			<a href="/member/delete.do?mno=${member.mno}">[삭제]</a>
 		</p>
 	</c:forEach>
 	
