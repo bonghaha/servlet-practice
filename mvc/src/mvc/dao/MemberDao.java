@@ -79,7 +79,7 @@ public class MemberDao {
 	/*
 	 * 회원 상세정보 조회
 	 */
-	public Member selectOne(int no) throws Exception {
+	public Member selectOne(int mno) throws Exception {
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -88,7 +88,7 @@ public class MemberDao {
 			conn = ds.getConnection();
 			String query = "SELECT mno, email, mname, cre_date, mod_date FROM members WHERE mno = ?";
 			pstmt = conn.prepareStatement(query);
-			pstmt.setInt(1, no);
+			pstmt.setInt(1, mno);
 			rs = pstmt.executeQuery();
 			
 			Member member = new Member();
