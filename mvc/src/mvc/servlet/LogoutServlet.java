@@ -11,13 +11,13 @@ import javax.servlet.http.HttpSession;
 
 @SuppressWarnings("serial")
 @WebServlet("/auth/logout")
-public class Logout extends HttpServlet{
+public class LogoutServlet extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		session.invalidate();
 		
-		response.sendRedirect("/auth/login");
+		request.setAttribute("viewUrl", "redirect:/auth/login.do");
 	}
 }

@@ -31,7 +31,7 @@ public class MemberAddServlet extends HttpServlet {
 			Member member = (Member) request.getAttribute("member");
 			memberDao.insertMember(member);
 			
-			request.setAttribute("viewUrl", "redirect:list.do");
+			request.setAttribute("viewUrl", "redirect:/member/list.do");
 			
 		} catch (Exception e) {
 			throw new ServletException(e);

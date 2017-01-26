@@ -2,7 +2,6 @@ package mvc.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -30,16 +29,17 @@ public class LoginServlet extends HttpServlet{
 			ServletContext sc = this.getServletContext();
 			
 			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
-			Member member = memberDao.exist(request.getParameter("email"), request.getParameter("password"));
+			Member member = memberDao.exist(
+				request.getParameter("email"),
+				request.getParameter("password"));
 			
 			if(member != null) {
 				HttpSession session = request.getSession();
 				session.setAttribute("member", member);
 				
-				response.sendRedirect("/member/list");
+				request.setAttribute("viewUrl", "redirect:/member/list.do");
 			} else {
-				RequestDispatcher rd = request.getRequestDispatcher("/auth/LoginFail.jsp");
-				rd.forward(request, response);
+				request.setAttribute("viewUrl", "/auth/LoginFail.jsp");
 			}
 			
 		} catch(Exception e) {

@@ -3,7 +3,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<meta http-equiv="Refresh" content="5;url=login">	<!-- 5초 뒤에 /auth/login 으로 이동 -->
+	<meta http-equiv="Refresh" content="4; url=/auth/login.do">	<!-- 5초 뒤에 /auth/login 으로 이동 -->
 	<title>로그인 실패</title>
 </head>
 <body>
