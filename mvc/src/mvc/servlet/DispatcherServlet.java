@@ -1,14 +1,20 @@
 package mvc.servlet;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import mvc.control.Controller;
+import mvc.control.MemberAddController;
+import mvc.control.MemberListController;
+import mvc.control.MemberUpdateController;
 import mvc.vo.Member;
 
 @SuppressWarnings("serial")
@@ -20,27 +26,37 @@ public class DispatcherServlet extends HttpServlet {
 		String servletPath = request.getServletPath();
 		
 		try {
+			ServletContext sc = this.getServletContext();
+			
+			HashMap<String, Object> model = new HashMap<String, Object>();
+			model.put("memberDao", sc.getAttribute("memberDao"));
+			
 			String pageControllerPath = null;
+			Controller pageController = null;
 			
 			if ("/member/list.do".equals(servletPath)) {
-				pageControllerPath = "/member/list";
+				pageController = new MemberListController();
 				
 			} else if ("/member/add.do".equals(servletPath)) {
-				pageControllerPath = "/member/add";
+				pageController = new MemberAddController();
+				
 				if (request.getParameter("email") != null) {
-					request.setAttribute("member", new Member()
+					model.put("member", new Member()
 						.setEmail(request.getParameter("email"))
 						.setPassword(request.getParameter("password"))
 						.setMname(request.getParameter("mname")));
 				}
 				
 			} else if ("/member/update.do".equals(servletPath)) {
-				pageControllerPath = "/member/update";
+				pageController = new MemberUpdateController();
+				
 				if (request.getParameter("email") != null) {
-					request.setAttribute("member", new Member()
+					model.put("member", new Member()
 						.setMno(Integer.parseInt(request.getParameter("mno")))
 						.setEmail(request.getParameter("email"))
 						.setMname(request.getParameter("mname")));
+				} else {
+					model.put("mno", new Integer(request.getParameter("mno")));
 				}
 				
 			} else if ("/member/delete.do".equals(servletPath)) {
@@ -53,15 +69,17 @@ public class DispatcherServlet extends HttpServlet {
 				pageControllerPath = "/auth/logout";
 			}
 			
-			RequestDispatcher rd = request.getRequestDispatcher(pageControllerPath);
-			rd.include(request, response);
+			String viewUrl = pageController.execute(model);
 			
-			String viewUrl = (String) request.getAttribute("viewUrl");
+			for (String key : model.keySet()) {
+				request.setAttribute(key, model.get(key));
+			}
+			
 			if (viewUrl.startsWith("redirect:")) {
 				response.sendRedirect(viewUrl.substring(9));
 				return;
 			} else {
-				rd = request.getRequestDispatcher(viewUrl);
+				RequestDispatcher rd = request.getRequestDispatcher(viewUrl);
 				rd.include(request, response);
 			}
 			

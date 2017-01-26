@@ -45,7 +45,7 @@ public class MemberUpdateServlet extends HttpServlet {
 				.setMname(request.getParameter("mname"))
 				.setMno(Integer.parseInt(request.getParameter("mno"))));
 			
-			response.sendRedirect("/member/list");
+			response.sendRedirect("/member/list.do");
 			
 		} catch (Exception e) {
 			request.setAttribute("error", e);
