@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import mvc.control.Controller;
 import mvc.control.MemberAddController;
+import mvc.control.MemberDeleteController;
 import mvc.control.MemberListController;
 import mvc.control.MemberUpdateController;
 import mvc.vo.Member;
@@ -60,7 +61,8 @@ public class DispatcherServlet extends HttpServlet {
 				}
 				
 			} else if ("/member/delete.do".equals(servletPath)) {
-				pageControllerPath = "/member/delete";
+				pageController = new MemberDeleteController();
+				model.put("mno", new Integer(request.getParameter("mno")));
 				
 			} else if ("/auth/login.do".equals(servletPath)) {
 				pageControllerPath = "/auth/login";
