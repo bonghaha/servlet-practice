@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import mvc.control.Controller;
+import mvc.control.LoginController;
+import mvc.control.LogoutController;
 import mvc.control.MemberAddController;
 import mvc.control.MemberDeleteController;
 import mvc.control.MemberListController;
@@ -31,6 +33,7 @@ public class DispatcherServlet extends HttpServlet {
 			
 			HashMap<String, Object> model = new HashMap<String, Object>();
 			model.put("memberDao", sc.getAttribute("memberDao"));
+			model.put("session", request.getSession());
 			
 			String pageControllerPath = null;
 			Controller pageController = null;
@@ -65,10 +68,15 @@ public class DispatcherServlet extends HttpServlet {
 				model.put("mno", new Integer(request.getParameter("mno")));
 				
 			} else if ("/auth/login.do".equals(servletPath)) {
-				pageControllerPath = "/auth/login";
+				pageController = new LoginController();
+				if (request.getParameter("email") != null) {
+					model.put("loginInfo", new Member()
+						.setEmail(request.getParameter("email"))
+						.setPassword(request.getParameter("password")));
+				}
 				
 			} else if ("/auth/logout.do".equals(servletPath)) {
-				pageControllerPath = "/auth/logout";
+				pageController = new LogoutController();
 			}
 			
 			String viewUrl = pageController.execute(model);
