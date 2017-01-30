@@ -32,18 +32,11 @@ public class DispatcherServlet extends HttpServlet {
 			ServletContext sc = this.getServletContext();
 			
 			HashMap<String, Object> model = new HashMap<String, Object>();
-			model.put("memberDao", sc.getAttribute("memberDao"));
 			model.put("session", request.getSession());
 			
-			String pageControllerPath = null;
-			Controller pageController = null;
+			Controller pageController = (Controller) sc.getAttribute(servletPath);
 			
-			if ("/member/list.do".equals(servletPath)) {
-				pageController = new MemberListController();
-				
-			} else if ("/member/add.do".equals(servletPath)) {
-				pageController = new MemberAddController();
-				
+			if ("/member/add.do".equals(servletPath)) {
 				if (request.getParameter("email") != null) {
 					model.put("member", new Member()
 						.setEmail(request.getParameter("email"))
@@ -52,8 +45,6 @@ public class DispatcherServlet extends HttpServlet {
 				}
 				
 			} else if ("/member/update.do".equals(servletPath)) {
-				pageController = new MemberUpdateController();
-				
 				if (request.getParameter("email") != null) {
 					model.put("member", new Member()
 						.setMno(Integer.parseInt(request.getParameter("mno")))
@@ -64,19 +55,14 @@ public class DispatcherServlet extends HttpServlet {
 				}
 				
 			} else if ("/member/delete.do".equals(servletPath)) {
-				pageController = new MemberDeleteController();
 				model.put("mno", new Integer(request.getParameter("mno")));
 				
 			} else if ("/auth/login.do".equals(servletPath)) {
-				pageController = new LoginController();
 				if (request.getParameter("email") != null) {
 					model.put("loginInfo", new Member()
 						.setEmail(request.getParameter("email"))
 						.setPassword(request.getParameter("password")));
 				}
-				
-			} else if ("/auth/logout.do".equals(servletPath)) {
-				pageController = new LogoutController();
 			}
 			
 			String viewUrl = pageController.execute(model);
