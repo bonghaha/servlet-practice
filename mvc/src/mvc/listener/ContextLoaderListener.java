@@ -8,6 +8,12 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.sql.DataSource;
 
+import mvc.control.LoginController;
+import mvc.control.LogoutController;
+import mvc.control.MemberAddController;
+import mvc.control.MemberDeleteController;
+import mvc.control.MemberListController;
+import mvc.control.MemberUpdateController;
 import mvc.dao.MemberDao;
 
 @WebListener // 애노테이션으로 리스너 배치. or DD파일에 XML태그 선언
@@ -15,7 +21,6 @@ public class ContextLoaderListener implements ServletContextListener {
 	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-		
 		try {
 			ServletContext sc = event.getServletContext();
 			
@@ -26,7 +31,12 @@ public class ContextLoaderListener implements ServletContextListener {
 			MemberDao memberDao = new MemberDao();
 			memberDao.setDataSource(ds);
 			
-			sc.setAttribute("memberDao", memberDao);
+			sc.setAttribute("/auth/login.do", new LoginController().setMemberDao(memberDao));
+			sc.setAttribute("/auth/logout.do", new LogoutController());
+			sc.setAttribute("/member/list.do", new MemberListController().setMemberDao(memberDao));
+			sc.setAttribute("/member/add.do", new MemberAddController().setMemberDao(memberDao));
+			sc.setAttribute("/member/update.do", new MemberUpdateController().setMemberDao(memberDao));
+			sc.setAttribute("/member/delete.do", new MemberDeleteController().setMemberDao(memberDao));
 			
 		} catch(Throwable e) {
 			e.printStackTrace();
